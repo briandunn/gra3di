@@ -1,6 +1,5 @@
 require 'coffee_script'
 require 'sprockets'
-require 'pp'
 
 map "/assets" do
   environment = Sprockets::Environment.new
@@ -8,18 +7,32 @@ map "/assets" do
   run environment
 end
 
+module Gra3di
+  StaticPageApp = Struct.new :path do
+
+    def file
+      @file ||= File.read path
+    end
+
+    def call(env)
+      [
+        200,
+        {
+          'Content-Type'  => 'text/html',
+          'Content-Length' => file.bytesize.to_s
+        },
+        file.each_line
+      ]
+    end
+  end
+end
+
 map "/" do
-  run ->(env) {
-    index = File.open 'index.html'
-    [
-      200,
-      {
-        'Content-Type'  => 'text/html',
-        'Content-Length' => index.size.to_s
-      },
-      index
-    ]
-  }
+  run Gra3di::StaticPageApp.new 'index.html'
+end
+
+map '/spec' do
+  run Gra3di::StaticPageApp.new 'spec.html'
 end
 
 EVENTS = []

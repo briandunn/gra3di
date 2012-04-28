@@ -17,6 +17,12 @@ Getting Started
 You now have an events.json file. Congratulations.
 
 
+Specs
+=====
+
+visit `/spec` to run the suite
+
+
 Copyright
 =========
 
